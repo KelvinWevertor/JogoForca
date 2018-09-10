@@ -1,13 +1,17 @@
 package br.com.senaijandira.jogoforca;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.app.AlertDialog;
 
 import org.w3c.dom.Text;
 
@@ -20,11 +24,14 @@ ArrayList<String> letras= new ArrayList<String>();
 int palavratual =0 ;
 Button btntmp;
 
+MediaPlayer mediaPlayer;
+
     public void btnclick(View ver){
         btntmp = (Button) ver;
         btntmp.setEnabled(false);
-        //btntmp.setBackgroundColor(Color.parseColor("#ff0000"));
-
+        btntmp.setBackgroundColor(Color.parseColor("#ff0000"));
+        mediaPlayer = MediaPlayer.create(this, R.raw.musica);
+        mediaPlayer.start();
         letras.add(btntmp.getText().toString().toUpperCase());
         jogo();
 
@@ -33,12 +40,41 @@ Button btntmp;
     public boolean ler (String a){
         for (int i=0; i<letras.size();i++) {
             if(a.equals(letras.get(i).toString())){
-                btntmp.setBackgroundColor(Color.parseColor("#07ff00"));
+
                return true;
             }
         }
-        btntmp.setBackgroundColor(Color.parseColor("#ff0000"));
+
         return false;
+    }
+
+    private void gameOver(){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Parabens!!!");
+        alert.setMessage("Deseja Continuar?");
+
+
+        //ALERT BOTÃO DE NEGAÇÃO
+        alert.setNegativeButton("Finalizar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                finish();
+
+            }
+        });
+
+        //ALERT BOTÃO DE POSITIVO
+        alert.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //continuar o jogo
+                jogo();
+            }
+        });
+        alert.create().show();
     }
 
     public void jogo (){
@@ -88,6 +124,7 @@ Button btntmp;
 
         if(palavra[palavratual].length()==letrasachadas){
             System.out.println("Venceu");
+            gameOver();
             palavratual++;
             letras.clear();
             onCreate(null);
